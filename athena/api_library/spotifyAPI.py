@@ -48,15 +48,15 @@ def Previous_Track():
 def Next_Song():
     sp.next_track(device_id=primaryDeviceID)
 
+def Repeat_Song():
+    sp.repeat(state='track', device_id=primaryDeviceID)
+
 def ExecuteGenericCommand(TopicAndValue):
    global topicName
    global topicValue
-   splittedString = str(TopicAndValue['entities']).split("'")
-   uselessWords = ['type','value','{',': [{',': ',  ', ', 'suggested',': True, ',': ','}]}']
-   new_words = [word for word in splittedString if word not in uselessWords]
-   #print(new_words)
-   topicName = new_words[0]
-   topicValue = new_words[3]
+   topicName=next(iter(TopicAndValue['entities']))
+   topicValue=TopicAndValue['entities'][topicName][0]['value']
+   print(topicName + " " + topicValue)
    Authentication()
    SearchDevices()
    exec(topicName+'()') #Call the function of this file with reflection

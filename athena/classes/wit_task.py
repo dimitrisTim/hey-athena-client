@@ -54,4 +54,3 @@ class ActiveTask(Task):
         self.wit_topic = resp
         return True
 
-
