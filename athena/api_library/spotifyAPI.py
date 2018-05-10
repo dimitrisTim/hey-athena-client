@@ -7,6 +7,16 @@ primaryDeviceID = ''
 topicName = ""
 topicValue = ""
 
+def ExecuteGenericCommand(TopicAndValue):
+   global topicName 
+   global topicValue
+   topicName=next(iter(TopicAndValue['entities']))
+   topicValue=TopicAndValue['entities'][topicName][0]['value']
+   print(topicName + " " + topicValue)
+   Authentication() 
+   SearchDevices()  
+   exec(topicName+'()') #Call the function of this file with reflection
+
 def Authentication():
     global sp
     scope = 'user-library-read user-modify-playback-state user-read-playback-state'
@@ -50,19 +60,3 @@ def Next_Song():
 
 def Repeat_Song():
     sp.repeat(state='track', device_id=primaryDeviceID)
-
-def ExecuteGenericCommand(TopicAndValue):
-   global topicName
-   global topicValue
-   topicName=next(iter(TopicAndValue['entities']))
-   topicValue=TopicAndValue['entities'][topicName][0]['value']
-   print(topicName + " " + topicValue)
-   Authentication()
-   SearchDevices()
-   exec(topicName+'()') #Call the function of this file with reflection
-
-
-#Authentication()
-#Shuffle()
-#PlayArtist("mastodon")
-#Pause()
