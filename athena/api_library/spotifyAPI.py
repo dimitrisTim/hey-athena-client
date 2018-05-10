@@ -4,6 +4,9 @@ import spotipy.util as util
 
 sp = ''
 primaryDeviceID = ''
+topicName = ""
+topicValue = ""
+
 def Authentication():
     global sp
     scope = 'user-library-read user-modify-playback-state user-read-playback-state'
@@ -24,24 +27,40 @@ def SearchDevices():
     devices = sp.devices()
     primaryDeviceID = devices['devices'][0]['id']
 
-def PlayArtist(artistName):
+def Play_Artist():
+    artistName = topicValue
     uri = SearchArtistUri(artistName)
     sp.start_playback(device_id=primaryDeviceID, context_uri=uri, uris=None, offset=None)
+    #Add return string to speak!
 
 def Shuffle():
-    sp.shuffle(state=True,device_id=None)
+    sp.shuffle(state=True,device_id=primaryDeviceID)
 
-def Pause():
+def Stop_Music():
     try:
-        sp.pause_playback(device_id=None)
+        sp.pause_playback(device_id=primaryDeviceID)
     except:
         pass
 
-def PreviousTrack():
-    sp.previous_track(device_id=None)
+def Previous_Track():
+    sp.previous_track(device_id=primaryDeviceID)
 
-def NextTrack():
-    sp.next_track(device_id=None)
+def Next_Song():
+    sp.next_track(device_id=primaryDeviceID)
+
+def ExecuteGenericCommand(TopicAndValue):
+   global topicName
+   global topicValue
+   splittedString = str(TopicAndValue['entities']).split("'")
+   uselessWords = ['type','value','{',': [{',': ',  ', ', 'suggested',': True, ',': ','}]}']
+   new_words = [word for word in splittedString if word not in uselessWords]
+   #print(new_words)
+   topicName = new_words[0]
+   topicValue = new_words[3]
+   Authentication()
+   SearchDevices()
+   exec(topicName+'()') #Call the function of this file with reflection
+
 
 #Authentication()
 #Shuffle()

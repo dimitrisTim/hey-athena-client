@@ -7,32 +7,23 @@ Usage Examples:
 """
 
 from athena.classes.module import Module
-from athena.classes.task import ActiveTask
+from athena.classes.wit_task import ActiveTask
 from athena.api_library import spotifyAPI
-
-SpotifyCommands = [r'.*\b(get turnt|turnt|turn up|play)\b (.+)',
-                   r'.*\b(?:pause|stop) (?:the|this) (?:music|spotify)\b*',
-                   r'.*\b(next|switch) ?(the|this) ?(song|track)\b.*',
-                   r'.*\b(previous|back) ?(song|track)\b.*',
-                   r'.*\b(repeat)\b.*',
-                   r'.*\b(random)\b.*',
-                   r'.*\b(get turnt|turnt|turn up|play)\b (weekly discoveries)']
 
 class PlaySpotifySongTask(ActiveTask):
 
     def __init__(self):
-        super(PlaySpotifySongTask, self).__init__(patterns=SpotifyCommands)
-        self.groups = {1: 'commandGroup'}
-   
-    def match(self,text): 
-        return self.match_and_save_groups(text, {2: 'artist'}) 
+        super(PlaySpotifySongTask, self).__init__()
+
+    def match(self,text):
+        return self.match_and_save_groups(text,"")
 
     def action(self, text):
-        self.speak('Turning up '+self.artist)
-        spotifyAPI.Authentication()
-        spotifyAPI.SearchDevices()
-        spotifyAPI.Shuffle()
-        spotifyAPI.PlayArtist(self.artist)
+        spotifyAPI.ExecuteGenericCommand(self.wit_topic)
+        #spotifyAPI.Authentication()
+        #spotifyAPI.SearchDevices()
+        #spotifyAPI.Shuffle()
+        #spotifyAPI.PlayArtist(self.artist)
 
 class SpotifyMusic(Module):
 
