@@ -43,6 +43,12 @@ def Stop_Music():
     except:
         pass
 
+def Continue_Playback():
+    try:
+        sp.start_playback(device_id=primaryDeviceID, context_uri=None, uris=None, offset=None)
+    except:
+        pass
+
 def Previous_Track():
     sp.previous_track(device_id=primaryDeviceID)
 
