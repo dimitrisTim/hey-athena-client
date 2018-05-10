@@ -1,21 +1,12 @@
 import sys
 import spotipy
 import spotipy.util as util
+import operator
 
 sp = ''
 primaryDeviceID = ''
 topicName = ""
 topicValue = ""
-
-def ExecuteGenericCommand(TopicAndValue):
-   global topicName 
-   global topicValue
-   topicName=next(iter(TopicAndValue['entities']))
-   topicValue=TopicAndValue['entities'][topicName][0]['value']
-   print(topicName + " " + topicValue)
-   Authentication() 
-   SearchDevices()  
-   exec(topicName+'()') #Call the function of this file with reflection
 
 def Authentication():
     global sp
@@ -60,3 +51,26 @@ def Next_Song():
 
 def Repeat_Song():
     sp.repeat(state='track', device_id=primaryDeviceID)
+
+def ExecuteGenericCommand(TopicAndValue):
+   global topicName
+   global topicValue
+   topicName=GetTopicWithBiggestConfidence(TopicAndValue)
+   topicValue=TopicAndValue['entities'][topicName][0]['value']
+   print(topicName + " " + topicValue)
+   Authentication()
+   SearchDevices()
+   exec(topicName+'()') #Call the function of this file with reflection
+
+def GetTopicWithBiggestConfidence(dictionary):
+   topics=iter(dictionary['entities'])
+   topicList=[]
+   #Iterate though topics and get names
+   for topic in topics:
+       topicList.append(topic)
+   confidenceList=[]
+   #Get confidence rates of each topic
+   for name in topicList:
+       confidenceList.append(dictionary['entities'][name][0]['confidence'])
+   #Return the topic with the max confidence
+   return topicList[confidenceList.index(max(confidenceList))]
